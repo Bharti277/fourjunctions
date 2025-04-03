@@ -1,0 +1,34 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+html {
+  text-align: center;
+}
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  margin: 40px;
+}
+#graph-representation {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.block {
+  width: 40px;
+  display: flex;
+  align-items: flex-end;
+  margin: 2px;
+  border: 1px solid #ccc;
+}
+.block div {
+  width: 100%;
+}
+.height {
+  background-color: yellow;
+}
+.water {
+  background-color: blue;
+}

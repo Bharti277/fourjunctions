@@ -1,0 +1,61 @@
+.movies__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+.movies__form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.movie__card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 450px;
+  height: 400px;
+  margin: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  text-decoration: none;
+  color: inherit;
+  background-color: #fff;
+  text-align: center;
+  padding: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.movie__name {
+  padding: 0 0 10px 0;
+  font-size: 20px;
+}
+.movie__year {
+  padding: 10px 0;
+}
+.movie__producer {
+  padding: 10px 0;
+}
+.movie__actors {
+  padding: 10px 0;
+}
+.edit__movies {
+  width: 80px;
+  padding: 8px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  margin-top: 10px;
+}
