@@ -22,26 +22,13 @@ exports.register = async (req, res) => {
       id: new_user._id,
       email: new_user.email,
       token: token,
-      message: "User created successfully",
+      message: "success",
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "User already exists" });
   }
 };
-
-// exports.allUser = async (req, res) => {
-//   try {
-//     const users = await User.find();
-//     res.status(200).json({
-//       message: "success",
-//       data: users,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(400).json({ message: "Internal server error" });
-//   }
-// };
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;

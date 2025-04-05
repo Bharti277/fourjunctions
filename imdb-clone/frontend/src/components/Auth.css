@@ -4,7 +4,17 @@
   align-items: center;
   padding: 30px;
 }
-
+.signup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.link {
+  font-size: 14px;
+  text-decoration: none;
+}
 .signup-page__title {
   font-size: 2rem;
   margin-bottom: 20px;

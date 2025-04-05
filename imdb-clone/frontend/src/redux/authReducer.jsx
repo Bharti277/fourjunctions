@@ -13,15 +13,11 @@ export const authReducer = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      console.log(state, "state", action);
-
-      // state.value = action.payload;
       state.email = action.payload.email;
       state.id = action.payload.id;
       state.token = action.payload.token;
     },
     logout: (state, action) => {
-      // state.value = { email: "", id: "", token: "" };
       state.email = "";
       state.id = "";
       state.token = "";

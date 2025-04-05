@@ -7,6 +7,7 @@ import { login } from "../redux/authReducer";
 
 function SignupPage() {
   const [data, setData] = useState({});
+  const [error, setError] = useState();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,34 +22,46 @@ function SignupPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
+    try {
+      instance
+        .post("user/register", {
+          email: data.email,
+          password: data.password,
+        })
+        .then((res) => {
+          console.log(res, "regres");
 
-    instance
-      .post("user/register", {
-        email: data.email,
-        password: data.password,
-      })
-      .then((res) => {
-        if (res.data.message === "User already exists") {
-          return alert("User already exists");
-        }
-        if (res.data.token) {
-          console.log("User created successfully", res.data);
+          if (
+            res.status === 500 &&
+            res.data.message === "User already exists"
+          ) {
+            setError("User already exists");
+            return alert("User already exists");
+          }
+          if (res.data.token) {
+            console.log("User created successfully", res.data);
 
-          dispatch(
-            login({
-              id: res.data.id,
-              email: res.data.email,
-              token: res.data.token,
-            })
-          );
-          navigate("/login");
-        }
-      });
+            dispatch(
+              login({
+                id: res.data.id,
+                email: res.data.email,
+                token: res.data.token,
+              })
+            );
+            navigate("/login");
+          }
+        });
+    } catch (error) {
+      setError("User already exists");
+      console.log(error);
+    }
   };
 
   return (
     <div className="signup-page">
       <h2 className="signup-page__title">Sign Up</h2>
+      <p>{error && error}</p>
       <form className="signup-form" onSubmit={handleSubmit}>
         <div className="signup-form__group">
           <label htmlFor="name" className="signup-form__label">
@@ -89,6 +102,7 @@ function SignupPage() {
             required
           />
         </div>
+
         <button type="submit" className="signup-form__button">
           Sign Up
         </button>

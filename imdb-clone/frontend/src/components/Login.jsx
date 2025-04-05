@@ -3,7 +3,7 @@ import "./Auth.css";
 import { instance } from "../utils/api";
 import { useDispatch } from "react-redux";
 import { login } from "../redux/authReducer";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function LoginPage() {
   const [data, setData] = useState({});
@@ -65,6 +65,12 @@ function LoginPage() {
             onChange={handleInputChange}
             required
           />
+        </div>
+        <div className="signup">
+          Don&apos;t have account?{" "}
+          <Link to={"/signup"} className="link">
+            <h3>signup</h3>
+          </Link>
         </div>
         <button type="submit" className="login-form__button">
           Login

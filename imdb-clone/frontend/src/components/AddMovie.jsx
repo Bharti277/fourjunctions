@@ -1,88 +1,110 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { instance } from "../utils/api";
 import "./AddMovie.css";
 
 function AddMovie() {
-  const params = useParams();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
-  const [inputs, setInputs] = useState({});
+  // const [name, setName] = useState("");
+  // const [yearOfRelease, setYearOfRelease] = useState("");
+  // const [producerName, setProducerName] = useState("");
+  const [actors, setActors] = useState([""]);
   const [errors, setErrors] = useState({});
-  const [actorsArr, setActorsArr] = useState([1]);
-  const [actors, setActors] = useState({});
+  const [data, setData] = useState({
+    name: "",
+    yearOfRelease: "",
+    producerName: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
+  };
+
+  const handleActorChange = (e, index) => {
+    const newActors = [...actors];
+    newActors[index] = e.target.value;
+    setActors(newActors);
+  };
+
+  const addActorField = () => {
+    actors([...actors, ""]);
+  };
+
+  const removeActorField = (index) => {
+    const newActors = [...actors];
+    newActors.splice(index, 1);
+    actors(newActors);
+  };
 
   const deleteEmpty = (arr) => {
-    return arr.filter((item) => item !== "");
+    return arr.filter((item) => item.trim() !== "");
   };
 
-  const handleChangeActors = (e) => {
-    setActors((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const validateForm = () => {
+    let errors = {};
+
+    if (!data.name || !data.name.trim()) {
+      errors.name = "Movie name is required";
+    } else if (data.name.trim().length < 3) {
+      errors.name = "Movie name should be at least 3 characters long";
+    }
+
+    if (!data.yearOfRelease) {
+      errors.yearOfRelease = "Year of release is required";
+    }
+
+    if (!data.producerName || !data.producerName.trim()) {
+      errors.producerName = "Producer name is required";
+    } else if (data.producerName.trim().length < 3) {
+      errors.producerName =
+        "Producer name should be at least 3 characters long";
+    }
+
+    const validActors = deleteEmpty(actors);
+    if (validActors.length === 0) {
+      errors.actors = "At least one actor name is required";
+    } else {
+      validActors.forEach((actor) => {
+        if (actor.trim().length < 2) {
+          errors.actors = "Actor names should be at least 2 characters long";
+          return;
+        }
+      });
+      const newErrors = { ...errors };
+      actors.forEach((_, index) => delete newErrors[`actor-${index}`]);
+      errors = newErrors;
+    }
+
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   };
-  const handleChange = (e) => {
-    setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+
   const handleSubmit = () => {
     if (!validateForm()) return;
 
-    console.log(inputs);
-    let url;
+    const validActors = deleteEmpty(actors);
 
-    url = "/movie";
     instance
-      .post(url, {
-        ...inputs,
-        actorNames: deleteEmpty(Object.values(actors)),
+      .post("/movie", {
+        name: data.name,
+        yearOfRelease: data.yearOfRelease,
+        producerName: data.producerName,
+        actorNames: validActors,
       })
       .then((res) => {
-        setInputs({});
-        setActors({});
+        setData({
+          name: "",
+          yearOfRelease: "",
+          producerName: "",
+        });
         alert(res.data.message);
         navigate("/movielist");
       })
       .catch((err) => console.log(err));
   };
 
-  const validateForm = () => {
-    let errors = {};
-
-    if (!inputs.name || !inputs.name.trim()) {
-      errors.name = "Movie name is required";
-    } else if (inputs.name.trim().length < 3) {
-      errors.name = "Movie name should be at least 3 characters long";
-    }
-
-    if (!inputs.yearOfRelease) {
-      errors.yearOfRelease = "Year of release is required";
-    } else {
-      const year = Number(inputs.yearOfRelease);
-      const currentYear = new Date().getFullYear();
-      if (isNaN(year)) {
-        errors.yearOfRelease = "Year must be a valid number";
-      } else if (year < 1900 || year > currentYear) {
-        errors.yearOfRelease = `Year must be between 1900 and ${currentYear}`;
-      }
-    }
-
-    if (!inputs.producerName || !inputs.producerName.trim()) {
-      errors.producerName = "Producer name is required";
-    } else if (inputs.producerName.trim().length < 3) {
-      errors.producerName =
-        "Producer name should be at least 3 characters long";
-    }
-
-    actorsArr.forEach((item) => {
-      if (!actors[item] || !actors[item].trim()) {
-        errors[item] = "Actor name is required";
-      } else if (actors[item].trim().length < 2) {
-        errors[item] = "Actor name should be at least 2 characters long";
-      }
-    });
-
-    setErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
   return (
     <div className="addmovie__container">
       <h2 className="header">Add Movie</h2>
@@ -96,23 +118,21 @@ function AddMovie() {
               id="moviename"
               placeholder="Enter the movie name"
               className="input__field"
-              onChange={(e) => handleChange(e)}
-              value={inputs["name"] || ""}
+              onChange={handleChange}
             />
             {errors.name && <p className="error">{errors.name}</p>}
           </div>
           <div className="input">
-            <label htmlFor="moviename">Year of Release</label>
+            <label htmlFor="yearofrelease">Year of Release</label>
             <input
               type="number"
               className="input__field"
               placeholder="Enter year of release e.g 2025"
               min={1900}
-              max={2025}
+              max={new Date().getFullYear()}
               name="yearOfRelease"
               id="yearofrelease"
-              onChange={(e) => handleChange(e)}
-              value={inputs["yearOfRelease"] || ""}
+              onChange={handleChange}
             />
             {errors.yearOfRelease && (
               <p className="error">{errors.yearOfRelease}</p>
@@ -120,48 +140,46 @@ function AddMovie() {
           </div>
 
           <div className="input">
-            <label htmlFor="moviename">Producer</label>
+            <label htmlFor="producer">Producer</label>
             <input
               type="text"
               className="input__field"
               placeholder="Enter the producer name"
               name="producerName"
               id="producer"
-              onChange={(e) => handleChange(e)}
-              value={inputs["producerName"] || ""}
+              onChange={handleChange}
             />
             {errors.producerName && (
               <p className="error">{errors.producerName}</p>
             )}
           </div>
           <div className="input">
-            <label htmlFor="moviename">Actors</label>
-            {actorsArr.map((item, index) => {
-              return (
-                <div key={item}>
-                  <input
-                    type="text"
-                    name={item}
-                    id="actor"
-                    placeholder="Enter the actor name"
-                    className="input__field actor"
-                    onChange={(e) => handleChangeActors(e)}
-                    value={actors[item] || ""}
-                  />
-                  {errors[item] && <p className="error">{errors[item]}</p>}
-                </div>
-              );
-            })}
+            <label htmlFor="actors">Actors</label>
+            {actors.map((actor, index) => (
+              <div key={index} className="actor-input-group">
+                <input
+                  type="text"
+                  name={`actor-${index}`}
+                  id="actor"
+                  placeholder="Enter the actor name"
+                  className="input__field actor"
+                  onChange={(e) => handleActorChange(e, index)}
+                  value={actor}
+                />
+                {actors.length > 1 && (
+                  <button
+                    type="button"
+                    className="remove-actor-btn"
+                    onClick={() => removeActorField(index)}
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+            {errors.actors && <p className="error">{errors.actors}</p>}
             <div className="button__container">
-              <button
-                className="btn"
-                onClick={() =>
-                  setActorsArr((prev) => [
-                    ...prev,
-                    actorsArr[actorsArr.length - 1] + 1,
-                  ])
-                }
-              >
+              <button type="button" className="btn" onClick={addActorField}>
                 Add Actor
               </button>
               <button className="btn" onClick={handleSubmit}>
