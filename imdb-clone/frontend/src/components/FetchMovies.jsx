@@ -13,7 +13,6 @@ const FetchMovies = () => {
       );
       const data = await response.json();
       setMovies(data.results);
-      console.log(data);
     } catch (err) {
       console.log("Error fetching movies", err);
     }
@@ -24,28 +23,33 @@ const FetchMovies = () => {
   }, []);
 
   return (
-    <div className="home__conatiner">
-      {movies.length > 0 && (
-        <div>
-          <h1>Trending Movies</h1>
-          <div className="movies__container">
-            {movies.map((movie) => {
-              return (
-                <div key={movie.id}>
-                  <h1>{movie.original_title}</h1>
-                  <img
-                    src={`${import.meta.env.VITE_TMDB_IMAGE}${
-                      movie.backdrop_path
-                    }`}
-                    alt=""
-                  />
-                </div>
-              );
-            })}
+    <>
+      <p className="please__login">
+        To get the access of Main component please Login!
+      </p>
+      <div className="home__conatiner">
+        {movies.length > 0 && (
+          <div>
+            <h1>Trending Movies</h1>
+            <div className="movies__container">
+              {movies.map((movie) => {
+                return (
+                  <div key={movie.id}>
+                    <h1>{movie.original_title}</h1>
+                    <img
+                      src={`${import.meta.env.VITE_TMDB_IMAGE}${
+                        movie.backdrop_path
+                      }`}
+                      alt=""
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 
